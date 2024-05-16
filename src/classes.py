@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
-import src.functions as fn
-import src.visualize as vis
+import functions as fn
+import visualize as vis
 
 class Particle:
     def __init__(self, x, y, vx, vy):

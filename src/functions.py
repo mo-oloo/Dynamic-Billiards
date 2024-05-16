@@ -1,5 +1,5 @@
 import numpy as np
-import src.classes as cl
+import classes as cl
 
 EPS = 1e-8
 

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import pandas as pd
-import src.classes as cl
+import classes as cl
 
 def plot_collisions(data):
     data = data.dropna(subset=['scatterer_hit'])
