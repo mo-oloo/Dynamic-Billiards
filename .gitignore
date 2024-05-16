@@ -1,5 +1,5 @@
-# ipynb files used for testing
-*.ipynb
+# .ipynb files used for testing
+testing/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
