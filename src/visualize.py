@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from matplotlib.collections import LineCollection
 import pandas as pd
 import classes as cl
 
@@ -45,7 +46,7 @@ def animate_trajectories(data, scatterers, boundary, fps=30, length=10):
     for scatterer_circle in scatterer_circles:
         ax.add_artist(scatterer_circle)
 
-    particle, = ax.plot([], [], 'bo', markersize=5)
+    particle, = ax.plot([], [], 'r', lw=2)
 
     def init():
         particle.set_data([], [])
@@ -53,6 +54,9 @@ def animate_trajectories(data, scatterers, boundary, fps=30, length=10):
 
     def animate(i):
         particle.set_data(data['x'].iloc[:i], data['y'].iloc[:i])
+        if i > 0 and data['scatterer_hit'].iloc[i] is not None and data['scatterer_hit'].iloc[i+1] is not None:
+        else:
+
         return particle,
 
     ani = animation.FuncAnimation(fig, animate, init_func=init, frames=int(length*fps), interval=int(1000/fps), blit=True)

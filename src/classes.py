@@ -47,16 +47,16 @@ class BilliardsSystem:
         self.time = 0
         self.num_collisions = 0
         self.start_data = {
-            'time': [0],
-            'n': [0],
-            'x': [particle.pos[0]],
-            'y': [particle.pos[1]],
-            'vx': [particle.vel[0]],
-            'vy': [particle.vel[1]],
+            'time': [self.time],
+            'n': [self.num_collisions],
+            'x': [self.particle.pos[0]],
+            'y': [self.particle.pos[1]],
+            'vx': [self.particle.vel[0]],
+            'vy': [self.particle.vel[1]],
             'scatterer_hit': [None],
             'theta': [None],
             'incidence_vector': [None]
-            }
+        }
         self.data = pd.DataFrame(data=self.start_data)
 
     def reset_data(self):
@@ -80,7 +80,10 @@ class BilliardsSystem:
         self.time += time
 
         new_pos = fn.check_particle_bounds(self.particle.pos, self.boundary.dimensions)
-        self.particle.pos = new_pos if new_pos is not None else self.particle.pos # Teleport particle if it's outside boundary
+        if new_pos is not None:
+            new_data = self.data_entry()
+            self.data = pd.concat([self.data, new_data], ignore_index=True)
+            self.particle.pos = new_pos
 
         if scatterer_index is None:
             theta, incidence_vector = None, None
@@ -91,20 +94,8 @@ class BilliardsSystem:
             collide_true = 1
             self.num_collisions += 1
         
-        new_data = {
-                'time': [self.time],
-                'n': [self.num_collisions],
-                'x': [self.particle.pos[0]],
-                'y': [self.particle.pos[1]],
-                'vx': [self.particle.vel[0]],
-                'vy': [self.particle.vel[1]],
-                'scatterer_hit': [scatterer_index],
-                'theta': [theta],
-                'incidence_vector': [incidence_vector]
-        }
-        new_df = pd.DataFrame(data=new_data)
-
-        self.data = pd.concat([self.data, new_df], ignore_index=True)
+        new_data = self.data_entry(scatterer_index, theta, incidence_vector)
+        self.data = pd.concat([self.data, new_data], ignore_index=True)
         return collide_true
 
     def find_next_collision(self):
@@ -124,6 +115,10 @@ class BilliardsSystem:
         else: # Shouldn't happen, since particle will always collide with boundary
             print("THERE WAS AN ERROR")
             return None, None
+        
+    # Checks for the case that the particle 'glitches' through a scatterer
+    def error_check(self):
+        pass
         
     def data_entry(self, scat_index=None, theta=None, incidence_vector=None):
         new_data = {
