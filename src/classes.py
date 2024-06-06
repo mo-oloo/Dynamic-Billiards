@@ -4,10 +4,16 @@ import functions as fn
 import visualize as vis
 
 class Particle:
-    def __init__(self, x, y, vx, vy):
-        self.pos = np.array([x, y], dtype=np.float64)
-        v = np.array([vx, vy], dtype=np.float64)
-        self.vel = v / np.linalg.norm(v)
+    def __init__(self, x=None, y=None, vx=None, vy=None, arr=None):
+        if arr is not None:
+            self.pos = np.array(arr[:2])
+            self.vel = np.array(arr[2:])
+        else:
+            if x is None or y is None or vx is None or vy is None:
+                raise ValueError("Please provide x, y, vx, and vy values.")
+            self.pos = np.array([x, y], dtype=np.float64)
+            v = np.array([vx, vy], dtype=np.float64)
+            self.vel = v / np.linalg.norm(v)
 
     def update_position(self, t):
         self.pos += t * self.vel

@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import classes as cl
 
 EPS = 1e-8
@@ -77,7 +78,7 @@ def generate_tangential_trajectories(n, boundary, scatterers):
     scatterers (list): List of Scatterer objects
 
     Returns:
-    particles (np.ndarray): 2d float array of shape (2*s*n, 4) where s is the number of scatterers and each row is [x, y, vx, vy]
+    particles (list): List of Particle objects
     '''
 
     s = len(scatterers)
@@ -96,6 +97,6 @@ def generate_tangential_trajectories(n, boundary, scatterers):
     y_bounds = boundary.height/2
     particles = particles[(particles[:, 0] >= -x_bounds) & (particles[:, 0] <= x_bounds) & (particles[:, 1] >= -y_bounds) & (particles[:, 1] <= y_bounds)]
     particles = particles[(particles[:, 2] != 0) | (particles[:, 3] != 0)] # Remove particles with zero velocity
-    
-    return particles
 
+    particles = [cl.Particle(arr=particles[i, :]) for i in range(len(particles))]
+    return particles
