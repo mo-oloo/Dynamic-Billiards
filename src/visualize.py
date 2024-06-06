@@ -55,8 +55,9 @@ def animate_trajectories(data, scatterers, boundary, fps=30, length=10):
     def animate(i):
         particle.set_data(data['x'].iloc[:i], data['y'].iloc[:i])
         if i > 0 and data['scatterer_hit'].iloc[i] is not None and data['scatterer_hit'].iloc[i+1] is not None:
+            pass
         else:
-
+            pass
         return particle,
 
     ani = animation.FuncAnimation(fig, animate, init_func=init, frames=int(length*fps), interval=int(1000/fps), blit=True)

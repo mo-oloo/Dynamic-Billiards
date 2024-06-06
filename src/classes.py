@@ -116,10 +116,6 @@ class BilliardsSystem:
             print("THERE WAS AN ERROR")
             return None, None
         
-    # Checks for the case that the particle 'glitches' through a scatterer
-    def error_check(self):
-        pass
-        
     def data_entry(self, scat_index=None, theta=None, incidence_vector=None):
         new_data = {
                 'time': [self.time],

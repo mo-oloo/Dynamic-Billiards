@@ -64,3 +64,38 @@ def check_particle_bounds(pos, dimensions):
 
     return np.array([x, y]) if x != pos[0] or y != pos[1] else None
 
+def generate_tangential_trajectories(n, boundary, scatterers):
+    '''
+    Generates 2*s*n tangential trajectories for the system, where s is the number of scatterers.
+    Each point generated has tangential trajectories in both directions.
+
+    Note: even though the system has s scatterers, trajectories generated outside the boundary are not included.
+
+    Parameters:
+    n (int): Number of points to consider for each scatterer
+    boundary (Boundary): Boundary object
+    scatterers (list): List of Scatterer objects
+
+    Returns:
+    particles (np.ndarray): 2d float array of shape (2*s*n, 4) where s is the number of scatterers and each row is [x, y, vx, vy]
+    '''
+
+    s = len(scatterers)
+    particles = np.zeros((2*s*n, 4))
+    thetas = np.linspace(0, 2*np.pi, n, endpoint=False)
+
+    for i, scatterer in enumerate(scatterers):
+        for j in range(n):
+            x = scatterer.pos[0] + scatterer.radius*np.cos(thetas[j])
+            y = scatterer.pos[1] + scatterer.radius*np.sin(thetas[j])
+            vx = -np.sin(thetas[j])
+            vy = np.cos(thetas[j])
+            particles[i*n + j] = np.array([x, y, vx, vy])
+
+    x_bounds = boundary.width/2
+    y_bounds = boundary.height/2
+    particles = particles[(particles[:, 0] >= -x_bounds) & (particles[:, 0] <= x_bounds) & (particles[:, 1] >= -y_bounds) & (particles[:, 1] <= y_bounds)]
+    particles = particles[(particles[:, 2] != 0) | (particles[:, 3] != 0)] # Remove particles with zero velocity
+    
+    return particles
+
