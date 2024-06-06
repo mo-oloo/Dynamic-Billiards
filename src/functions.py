@@ -95,7 +95,7 @@ def generate_tangential_trajectories(n, boundary, scatterers):
 
     x_bounds = boundary.width/2
     y_bounds = boundary.height/2
-    particles = particles[(particles[:, 0] >= -x_bounds) & (particles[:, 0] <= x_bounds) & (particles[:, 1] >= -y_bounds) & (particles[:, 1] <= y_bounds)]
+    particles = particles[(particles[:, 0] > -x_bounds) & (particles[:, 0] < x_bounds) & (particles[:, 1] > -y_bounds) & (particles[:, 1] < y_bounds)]
     particles = particles[(particles[:, 2] != 0) | (particles[:, 3] != 0)] # Remove particles with zero velocity
 
     particles = [cl.Particle(arr=particles[i, :]) for i in range(len(particles))]

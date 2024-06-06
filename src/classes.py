@@ -8,6 +8,9 @@ class Particle:
         if arr is not None:
             self.pos = np.array(arr[:2])
             self.vel = np.array(arr[2:])
+        elif x is None and y is None and vx is None and vy is None and arr is None:
+            # Creates an 'empty' particle
+            self.pos = self.vel = np.empty(2)
         else:
             if x is None or y is None or vx is None or vy is None:
                 raise ValueError("Please provide x, y, vx, and vy values.")
