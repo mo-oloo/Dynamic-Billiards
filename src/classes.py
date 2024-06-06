@@ -52,7 +52,12 @@ class BilliardsSystem:
         self.boundary = boundary
         self.time = 0
         self.num_collisions = 0
-        self.start_data = {
+        self.start_data = self.init_start_data()
+        self.data = pd.DataFrame(data=self.start_data)
+
+    def init_start_data(self):
+        # IMPORTANT: This function actually uses the current location of the particle, only use when initializing the system
+        start_data = {
             'time': [self.time],
             'n': [self.num_collisions],
             'x': [self.particle.pos[0]],
@@ -63,7 +68,7 @@ class BilliardsSystem:
             'theta': [None],
             'incidence_vector': [None]
         }
-        self.data = pd.DataFrame(data=self.start_data)
+        return start_data
 
     def reset_data(self):
         self.time = 0
@@ -79,6 +84,11 @@ class BilliardsSystem:
         while i < n:
             i += self.update()
         return self.data
+    
+    def change_particle(self, particle):
+        self.particle = particle
+        self.start_data = self.init_start_data()
+        self.reset_data()
 
     def update(self):
         time, scatterer_index = self.find_next_collision()
