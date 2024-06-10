@@ -10,9 +10,21 @@ This is the plot of $\mathcal{S}\_{1}$
 
 ![alt text](images/output4.png)
 
+Plot of $\mathcal{S}\_{2}$
+
+![alt text](images/output7.png)
+
+Plot of $\mathcal{S}\_{3}$
+
+![alt text](images/output8.png)
+
 ## Image Set 2
 These set of images had an initial set $\mathcal{S}\_{0}$ of size 39998 (~20000 trajectories generated for each scatterer)
 
-Plot of mathcal{S}\_{1}$
+Plot of $\mathcal{S}\_{1}$
 
 ![alt text](images/output5.png)
+
+Plot of $\mathcal{S}\_{2}$
+
+![alt text](images/output6.png)
