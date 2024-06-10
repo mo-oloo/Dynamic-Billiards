@@ -82,8 +82,8 @@ def generate_tangential_trajectories(n, boundary, scatterers):
     '''
 
     s = len(scatterers)
-    particles = np.zeros((2*s*n, 4))
-    thetas = np.linspace(0, 2*np.pi, n, endpoint=False)
+    particles = []
+    thetas = np.linspace(0, 2*np.pi, n, endpoint=True)
 
     for i, scatterer in enumerate(scatterers):
         for j in range(n):
@@ -91,8 +91,12 @@ def generate_tangential_trajectories(n, boundary, scatterers):
             y = scatterer.pos[1] + scatterer.radius*np.sin(thetas[j])
             vx = -np.sin(thetas[j])
             vy = np.cos(thetas[j])
-            particles[i*n + j] = np.array([x, y, vx, vy])
-
+            # particles[i*n + j] = np.array([x, y, vx, vy])
+            # particles[i*n + j + n] = np.array([x, y, -vx, -vy])
+            particles.append(np.array([x, y, vx, vy]))
+            particles.append(np.array([x, y, -vx, -vy]))
+    particles = np.array(particles)
+    
     x_bounds = boundary.width/2
     y_bounds = boundary.height/2
     particles = particles[(particles[:, 0] > -x_bounds) & (particles[:, 0] < x_bounds) & (particles[:, 1] > -y_bounds) & (particles[:, 1] < y_bounds)]
@@ -100,3 +104,25 @@ def generate_tangential_trajectories(n, boundary, scatterers):
 
     particles = [cl.Particle(arr=particles[i, :]) for i in range(len(particles))]
     return particles
+
+def batch_run(system, particles, n):
+    '''
+    Given a system and a set of particles, runs the simulation for each particle for n steps.
+
+    Parameters:
+    system (BilliardsSystem): BilliardsSystem object
+    particles (list): List of Particle objects
+    n (int): Number of steps to run the simulation for each particle
+
+    Returns:
+    data (pd.DataFrame): DataFrame containing the data for each particle
+    '''
+
+    data = pd.DataFrame()
+
+    for particle in particles:
+        system.change_particle(particle)
+        d = pd.DataFrame(system.run_simulation(n).iloc[-1]).T
+        data = pd.concat([data, d], ignore_index=True)
+
+    return data
