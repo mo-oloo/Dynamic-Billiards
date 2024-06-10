@@ -11,6 +11,14 @@ def plot_collisions(data):
     data.loc[:, 'theta'] = data['theta'].astype(float)
     data.loc[:, 'incidence_vector'] = data['incidence_vector'].apply(lambda x: np.arctan2(x[1], x[0]))
 
+    #---------------------------------------
+    # Manually combine corner scatterers into a single scatterer
+    scat0 = [0]
+    scat1 = [1, 2, 3, 4]
+
+    data.loc[data['scatterer_hit'].isin(scat1), 'scatterer_hit'] = 1
+    #---------------------------------------
+
     numScatterers = data['scatterer_hit'].unique()
     fig, axs = plt.subplots(len(numScatterers), 1)
     
@@ -29,9 +37,7 @@ def plot_collisions(data):
         ax = axs[numScatterers.tolist().index(scatterer_hit)]
         ax.plot(incidence_vector, theta, 'ro', markersize=1)
 
-    fig.set_figwidth(30)
-
-    plt.show()
+    return fig
 
 def plot_trajectories(data):
     pass
