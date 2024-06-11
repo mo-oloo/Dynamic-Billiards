@@ -5,7 +5,7 @@ from matplotlib.collections import LineCollection
 import pandas as pd
 import classes as cl
 
-def plot_collisions(data):
+def process_collision_data(data):
     data = data.dropna(subset=['scatterer_hit'])
     data.loc[:, 'scatterer_hit'] = data['scatterer_hit'].astype(int)
     data.loc[:, 'theta'] = data['theta'].astype(float)
@@ -20,6 +20,16 @@ def plot_collisions(data):
     #---------------------------------------
 
     numScatterers = data['scatterer_hit'].unique()
+
+    return data, numScatterers
+
+def plot_collisions(data, numScatterers, plot_options={}):
+
+    if 'markersize' in plot_options:
+        markersize = plot_options['markersize']
+    else:
+        markersize = 1
+
     fig, axs = plt.subplots(len(numScatterers), 1)
     
     for ax in axs:
@@ -35,8 +45,13 @@ def plot_collisions(data):
 
         # find the scatterer by using index of numScatterers
         ax = axs[numScatterers.tolist().index(scatterer_hit)]
-        ax.plot(incidence_vector, theta, 'ro', markersize=1)
+        ax.plot(incidence_vector, theta, 'ro', markersize=markersize)
 
+    return fig
+
+def plot_collisions2(data):
+    data, numScatterers = process_collision_data(data)
+    fig = plot_collisions(data, numScatterers)
     return fig
 
 def plot_trajectories(data):
