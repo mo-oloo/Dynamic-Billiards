@@ -28,7 +28,7 @@ class Particle:
         incidence_vector = self.vel / np.linalg.norm(self.vel) # Normalize velocity vector
         theta = np.arctan2(yp - yc, xp - xc)
         normal_vector = np.array([-np.cos(theta), -np.sin(theta)])
-        reflection_vector = incidence_vector - 2 * np.dot(self.vel, normal_vector) * normal_vector
+        reflection_vector = incidence_vector - 2 * np.dot(incidence_vector, normal_vector) * normal_vector
         reflection_vector = reflection_vector / np.linalg.norm(reflection_vector) # Normalize reflection vector
         self.vel = reflection_vector
 

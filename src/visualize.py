@@ -5,11 +5,19 @@ from matplotlib.collections import LineCollection
 import pandas as pd
 import classes as cl
 
+def process_collision_data_incvec(row):
+    vec = row['incidence_vector']
+    x = row['x']
+    y = row['y']
+
+    phi = np.arctan2(vec[1], vec[0]) - np.arctan2(y, x)
+    return np.arctan(np.tan(phi))
+
 def process_collision_data(data):
     data = data.dropna(subset=['scatterer_hit'])
     data.loc[:, 'scatterer_hit'] = data['scatterer_hit'].astype(int)
-    data.loc[:, 'theta'] = data['theta'].astype(float)
-    data.loc[:, 'incidence_vector'] = data['incidence_vector'].apply(lambda x: np.arctan2(x[1], x[0]))
+    data.loc[:, 'theta'] = data['theta'].astype(float) + np.pi
+    data.loc[:, 'incidence_vector'] = data.apply(process_collision_data_incvec, axis=1)
 
     #---------------------------------------
     # Manually combine corner scatterers into a single scatterer
@@ -30,12 +38,15 @@ def plot_collisions(data, numScatterers, plot_options={}):
     else:
         markersize = 1
 
+    if 's' in plot_options:
+        s = plot_options['s']
+    else:
+        s = None
+
     fig, axs = plt.subplots(len(numScatterers), 1)
     
     for ax in axs:
         fig_offset = np.pi/4
-        ax.set_xlim(-np.pi - (fig_offset), np.pi + (fig_offset))
-        ax.set_ylim(-np.pi/2 - (fig_offset/2), np.pi/2 + (fig_offset/2))
         ax.set_aspect('equal')
 
     for i in range(len(data)):
@@ -44,8 +55,17 @@ def plot_collisions(data, numScatterers, plot_options={}):
         incidence_vector = data['incidence_vector'].iloc[i]
 
         # find the scatterer by using index of numScatterers
-        ax = axs[numScatterers.tolist().index(scatterer_hit)]
-        ax.plot(incidence_vector, theta, 'ro', markersize=markersize)
+        axi = axs[numScatterers.tolist().index(scatterer_hit)]
+        ax.plot(theta, incidence_vector, 'ro', markersize=markersize)
+        # if i < 1000 and i % 2 == 0:
+        #     axi.plot(theta, incidence_vector, 'ro', markersize=markersize)
+        # elif i < 1000 and i % 2 == 1:
+        #     axi.plot(theta, incidence_vector, 'bo', markersize=markersize)
+        # else:
+        #     axi.plot(theta, incidence_vector, 'go', markersize=markersize)
+
+    if s is not None:
+        fig.suptitle(f'$S_{s}$')
 
     return fig
 
