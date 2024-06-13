@@ -58,7 +58,7 @@ class BilliardsSystem:
         self.start_data = self.init_start_data()
         self.data = pd.DataFrame(data=self.start_data)
 
-    def init_start_data(self):
+    def init_start_data(self, scatterer_hit=None, theta=None, incidence_vector=None):
         # IMPORTANT: This function actually uses the current location of the particle, only use when initializing the system
         start_data = {
             'time': [self.time],
@@ -67,9 +67,9 @@ class BilliardsSystem:
             'y': [self.particle.pos[1]],
             'vx': [self.particle.vel[0]],
             'vy': [self.particle.vel[1]],
-            'scatterer_hit': [None],
-            'theta': [None],
-            'incidence_vector': [None]
+            'scatterer_hit': [scatterer_hit.astype(int) if scatterer_hit is not None else None],
+            'theta': [theta],
+            'incidence_vector': [incidence_vector]
         }
         return start_data
 
@@ -88,9 +88,9 @@ class BilliardsSystem:
             i += self.update()
         return self.data
     
-    def change_particle(self, particle):
+    def change_particle(self, particle, scatterer_hit=None, theta=None, incidence_vector=None):
         self.particle = particle
-        self.start_data = self.init_start_data()
+        self.start_data = self.init_start_data(scatterer_hit, theta, incidence_vector)
         self.reset_data()
 
     def update(self):

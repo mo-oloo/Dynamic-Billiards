@@ -16,8 +16,11 @@ def process_collision_data_incvec(row):
 def process_collision_data(data):
     data = data.dropna(subset=['scatterer_hit'])
     data.loc[:, 'scatterer_hit'] = data['scatterer_hit'].astype(int)
-    data.loc[:, 'theta'] = data['theta'].astype(float) + np.pi
-    data.loc[:, 'incidence_vector'] = data.apply(process_collision_data_incvec, axis=1)
+    data.loc[:, 'theta'] = data['theta'].astype(float) % (2*np.pi)
+
+    # Only if incidence_vector isn't already a scalar
+    if isinstance(data['incidence_vector'].iloc[0], np.ndarray):
+        data.loc[:, 'incidence_vector'] = data.apply(process_collision_data_incvec, axis=1)
 
     #---------------------------------------
     # Manually combine corner scatterers into a single scatterer
@@ -46,7 +49,9 @@ def plot_collisions(data, numScatterers, plot_options={}):
     fig, axs = plt.subplots(len(numScatterers), 1)
     
     for ax in axs:
-        fig_offset = np.pi/4
+        fig_offset = np.pi/8
+        ax.set_xlim(0 - fig_offset, 2*np.pi + fig_offset)
+        ax.set_ylim(-np.pi/2 - fig_offset, np.pi/2 + fig_offset)
         ax.set_aspect('equal')
 
     for i in range(len(data)):
@@ -56,7 +61,7 @@ def plot_collisions(data, numScatterers, plot_options={}):
 
         # find the scatterer by using index of numScatterers
         axi = axs[numScatterers.tolist().index(scatterer_hit)]
-        ax.plot(theta, incidence_vector, 'ro', markersize=markersize)
+        axi.plot(theta, incidence_vector, 'ro', markersize=markersize)
         # if i < 1000 and i % 2 == 0:
         #     axi.plot(theta, incidence_vector, 'ro', markersize=markersize)
         # elif i < 1000 and i % 2 == 1:

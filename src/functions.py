@@ -83,6 +83,9 @@ def generate_tangential_trajectories(n, boundary, scatterers):
 
     s = len(scatterers)
     particles = []
+    scat = []
+    thet = []
+    incvecs = []
     thetas = np.linspace(0, 2*np.pi, n, endpoint=True)
 
     for i, scatterer in enumerate(scatterers):
@@ -93,17 +96,27 @@ def generate_tangential_trajectories(n, boundary, scatterers):
             vy = np.cos(thetas[j])
             # particles[i*n + j] = np.array([x, y, vx, vy])
             # particles[i*n + j + n] = np.array([x, y, -vx, -vy])
-            particles.append(np.array([x, y, vx, vy]))
-            particles.append(np.array([x, y, -vx, -vy]))
+            particles.extend((np.array([x, y, vx, vy]), np.array([x, y, -vx, -vy])))
+            scat.extend((i, i))
+            thet.extend((thetas[j], thetas[j]))
+            incvecs.extend((np.pi/2, -np.pi/2))
     particles = np.array(particles)
+    scat = np.array(scat)
+    thet = np.array(thet)
+    incvecs = np.array(incvecs)
     
     x_bounds = boundary.width/2
     y_bounds = boundary.height/2
-    particles = particles[(particles[:, 0] > -x_bounds) & (particles[:, 0] < x_bounds) & (particles[:, 1] > -y_bounds) & (particles[:, 1] < y_bounds)]
-    particles = particles[(particles[:, 2] != 0) | (particles[:, 3] != 0)] # Remove particles with zero velocity
+
+    # Get index of particles within the boundary
+    in_bounds = (particles[:, 0] >= -x_bounds) & (particles[:, 0] <= x_bounds) & (particles[:, 1] >= -y_bounds) & (particles[:, 1] <= y_bounds)
+    particles = particles[in_bounds]
+    scat = scat[in_bounds]
+    thet = thet[in_bounds]
+    incvecs = incvecs[in_bounds]
 
     particles = [cl.Particle(arr=particles[i, :]) for i in range(len(particles))]
-    return particles
+    return particles, scat, thet, incvecs
 
 def batch_run(system, particles, n):
     '''
