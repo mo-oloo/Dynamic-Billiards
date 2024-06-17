@@ -56,17 +56,17 @@ class BilliardsSystem:
         self.time = 0
         self.num_collisions = 0
         self.start_data = self.init_start_data()
-        self.data = pd.DataFrame(data=self.start_data)
+        self.data = [self.start_data]
 
     def init_start_data(self, scatterer_hit=None, theta=None, incidence_vector=None):
         # IMPORTANT: This function actually uses the current location of the particle, only use when initializing the system
         start_data = {
-            'time': [self.time],
-            'n': [self.num_collisions],
-            'x': [self.particle.pos[0]],
-            'y': [self.particle.pos[1]],
-            'vx': [self.particle.vel[0]],
-            'vy': [self.particle.vel[1]],
+            'time': self.time,
+            'n': self.num_collisions,
+            'x': self.particle.pos[0],
+            'y': self.particle.pos[1],
+            'vx': self.particle.vel[0],
+            'vy': self.particle.vel[1],
             'scatterer_hit': [scatterer_hit.astype(int) if scatterer_hit is not None else None],
             'theta': [theta],
             'incidence_vector': [incidence_vector]
@@ -76,9 +76,9 @@ class BilliardsSystem:
     def reset_data(self):
         self.time = 0
         self.num_collisions = 0
-        self.particle.pos = np.array([self.start_data['x'][0], self.start_data['y'][0]], dtype=np.float64)
-        self.particle.vel = np.array([self.start_data['vx'][0], self.start_data['vy'][0]], dtype=np.float64)
-        self.data = pd.DataFrame(data=self.start_data)
+        self.particle.pos = np.array([self.start_data['x'], self.start_data['y']], dtype=np.float64)
+        self.particle.vel = np.array([self.start_data['vx'], self.start_data['vy']], dtype=np.float64)
+        self.data = [self.start_data]
 
 
     def run_simulation(self, n):
@@ -86,7 +86,7 @@ class BilliardsSystem:
         i = 0
         while i < n:
             i += self.update()
-        return self.data
+        return pd.DataFrame(self.data)
     
     def change_particle(self, particle, scatterer_hit=None, theta=None, incidence_vector=None):
         self.particle = particle
@@ -101,7 +101,7 @@ class BilliardsSystem:
         new_pos = fn.check_particle_bounds(self.particle.pos, self.boundary.dimensions)
         if new_pos is not None:
             new_data = self.data_entry()
-            self.data = pd.concat([self.data, new_data], ignore_index=True)
+            self.data.append(new_data)
             self.particle.pos = new_pos
 
         if scatterer_index is None:
@@ -114,7 +114,7 @@ class BilliardsSystem:
             self.num_collisions += 1
         
         new_data = self.data_entry(scatterer_index, theta, incidence_vector)
-        self.data = pd.concat([self.data, new_data], ignore_index=True)
+        self.data.append(new_data)
         return collide_true
 
     def find_next_collision(self):
@@ -137,18 +137,17 @@ class BilliardsSystem:
         
     def data_entry(self, scat_index=None, theta=None, incidence_vector=None):
         new_data = {
-                'time': [self.time],
-                'n': [self.num_collisions],
-                'x': [self.particle.pos[0]],
-                'y': [self.particle.pos[1]],
-                'vx': [self.particle.vel[0]],
-                'vy': [self.particle.vel[1]],
-                'scatterer_hit': [scat_index],
-                'theta': [theta],
-                'incidence_vector': [incidence_vector]
+                'time': self.time,
+                'n': self.num_collisions,
+                'x': self.particle.pos[0],
+                'y': self.particle.pos[1],
+                'vx': self.particle.vel[0],
+                'vy': self.particle.vel[1],
+                'scatterer_hit': scat_index,
+                'theta': theta,
+                'incidence_vector': incidence_vector
         }
-        new_df = pd.DataFrame(data=new_data)
-        return new_df
+        return new_data
         
     # Graph angle of incidence vs theta by scatterer
     def plot_collisions(self):
