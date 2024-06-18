@@ -32,7 +32,7 @@ class Particle:
         reflection_vector = reflection_vector / np.linalg.norm(reflection_vector) # Normalize reflection vector
         self.vel = reflection_vector
 
-        return theta, incidence_vector
+        return theta, reflection_vector
 
 class Scatterer:
     def __init__(self, x, y, r):
