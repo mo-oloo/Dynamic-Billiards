@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import classes as cl
 
-EPS = 1e-8
+EPS = 1e-6
 
 def find_collision_scatterer(pos, vel, scat_pos_r):
     rel_pos = pos - scat_pos_r[:2]
@@ -13,18 +13,20 @@ def find_collision_scatterer(pos, vel, scat_pos_r):
     d = b**2 - 4*a*c
 
     # If d is negative, then particle trajectory doesn't intersect scatterer
-    if d < 0:
+    if d < 0 or a == 0:
         return None
     else:
-        t1 = (-b + np.sqrt(d)) / (2*a)
-        t2 = (-b - np.sqrt(d)) / (2*a)
+        d = np.sqrt(d)
+        t1 = (-b + d) / (2*a)
+        t2 = (-b - d) / (2*a)
 
         # Round small numbers to zero
         t1 = t1 if t1 > EPS else 0
         t2 = t2 if t2 > EPS else 0
 
         # Returns the smallest positive (non-zero) root
-        t = min(t1, t2) if min(t1, t2) > 0 else max(t1, t2) if max(t1, t2) > 0 else None
+        positive_roots = [t for t in [t1, t2] if t > 0]
+        t = min(positive_roots) if positive_roots else None
         return t
 
 def find_collisions_boundary(pos, vel, dimensions):
