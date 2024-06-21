@@ -62,9 +62,10 @@ def plot_collisions(data, numScatterers, plot_options={}):
         # find the scatterer by using index of numScatterers
         axi = axs[numScatterers.tolist().index(scatterer_hit)]
         axi.plot(theta, incidence_vector, 'ro', markersize=markersize)
-        # if i < 1000 and i % 2 == 0:
+
+        # if i < 2000 and i % 2 == 0:
         #     axi.plot(theta, incidence_vector, 'ro', markersize=markersize)
-        # elif i < 1000 and i % 2 == 1:
+        # elif i < 2000 and i % 2 == 1:
         #     axi.plot(theta, incidence_vector, 'bo', markersize=markersize)
         # else:
         #     axi.plot(theta, incidence_vector, 'go', markersize=markersize)
@@ -81,6 +82,45 @@ def plot_collisions2(data):
 
 def plot_trajectories(data):
     pass
+
+def animate_collisions(init_data, data, scatterers, boundary, fps=30, length=10):
+    fig, ax = plt.subplots(2, 2, figsize=(6, 6))
+
+    scatterer_circles = [plt.Circle((scatterer.pos_r[0], scatterer.pos_r[1]), scatterer.pos_r[2], color='r', fill=False) for scatterer in scatterers]
+    for axi in (ax[0, 0], ax[1, 0]):
+        axi.set_xlim(-boundary.width/2, boundary.width/2)
+        axi.set_ylim(-boundary.height/2, boundary.height/2)
+        # for scatterer_circle in scatterer_circles:
+        #     axi.add_patch(scatterer_circle)
+
+    for axi in (ax[0, 1], ax[1, 1]):
+        fig_offset = np.pi/8
+        axi.set_xlim(0 - fig_offset, 2*np.pi + fig_offset)
+        axi.set_ylim(-np.pi/2 - fig_offset, np.pi/2 + fig_offset)
+        axi.set_aspect('equal')
+
+    # traj = ax[0, 0].scatter([], [], color='black', s=1)
+    # scat_traj_0 = ax[0, 1].scatter([], [], color='black', s=1)
+    # scat_traj_1 = ax[1, 1].scatter([], [], color='black', s=1)
+
+    # def init():
+    #     traj.set_data([], [])
+    #     scat_traj_0.set_data([], [])
+    #     scat_traj_1.set_data([], [])
+    #     return traj, scat_traj_0, scat_traj_1
+
+    def animate(i):
+        ax[0, 0].scatter(init_data['x'].iloc[i], init_data['y'].iloc[i], color='black', s=1)
+        ax[1, 0].scatter(data['x'].iloc[i], data['y'].iloc[i], color='black', s=1)
+        if data['scatterer_hit'].iloc[i] == 0:
+            ax[0, 1].scatter(data['theta'].iloc[i], data['incidence_vector'].iloc[i], color='black', s=1)
+        elif data['scatterer_hit'].iloc[i] == 1:
+            ax[1, 1].scatter(data['theta'].iloc[i], data['incidence_vector'].iloc[i], color='black', s=1)
+
+
+    ani = animation.FuncAnimation(fig, animate, frames=int(length*fps), interval=int(1000/fps))
+    
+    return ani
 
 def animate_trajectories(data, scatterers, boundary, fps=30, length=10):
     fig, ax = plt.subplots()
