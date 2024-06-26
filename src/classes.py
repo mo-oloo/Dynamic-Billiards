@@ -59,7 +59,7 @@ class BilliardsSystem:
         self.start_data = self.init_start_data()
         self.data = [self.start_data]
 
-    def init_start_data(self, scatterer_hit=None, theta=None, incidence_vector=None):
+    def init_start_data(self, scatterer_hit=None, theta=None, reflection_vector=None):
         # IMPORTANT: This function actually uses the current location of the particle, only use when initializing the system
         start_data = {
             'time': self.time,
@@ -70,7 +70,7 @@ class BilliardsSystem:
             'vy': self.particle.vel[1],
             'scatterer_hit': scatterer_hit.astype(int) if scatterer_hit is not None else None,
             'theta': theta,
-            'incidence_vector': incidence_vector
+            'reflection_vector': reflection_vector
         }
         return start_data
 
@@ -81,7 +81,6 @@ class BilliardsSystem:
         self.particle.vel = np.array([self.start_data['vx'], self.start_data['vy']], dtype=np.float64)
         self.data = [self.start_data]
 
-
     def run_simulation(self, n):
         self.reset_data()
         i = 0
@@ -89,9 +88,9 @@ class BilliardsSystem:
             i += self.update()
         return pd.DataFrame(self.data)
     
-    def change_particle(self, particle, scatterer_hit=None, theta=None, incidence_vector=None):
+    def change_particle(self, particle, scatterer_hit=None, theta=None, reflection_vector=None):
         self.particle = particle
-        self.start_data = self.init_start_data(scatterer_hit, theta, incidence_vector)
+        self.start_data = self.init_start_data(scatterer_hit, theta, reflection_vector)
         self.reset_data()
 
     def update(self):
@@ -135,7 +134,7 @@ class BilliardsSystem:
         else: # Shouldn't happen, since particle will always collide with boundary
             SystemError("No collision found")
         
-    def data_entry(self, scat_index=None, theta=None, incidence_vector=None):
+    def data_entry(self, scat_index=None, theta=None, reflection_vector=None):
         new_data = {
                 'time': self.time,
                 'n': self.num_collisions,
@@ -145,7 +144,7 @@ class BilliardsSystem:
                 'vy': self.particle.vel[1],
                 'scatterer_hit': scat_index,
                 'theta': theta,
-                'incidence_vector': incidence_vector
+                'reflection_vector': reflection_vector
         }
         return new_data
         

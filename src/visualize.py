@@ -5,8 +5,8 @@ from matplotlib.collections import LineCollection
 import pandas as pd
 import classes as cl
 
-def process_collision_data_incvec(row):
-    vec = row['incidence_vector']
+def process_collision_data_refvec(row):
+    vec = row['reflection_vector']
     x = row['x']
     y = row['y']
 
@@ -15,12 +15,11 @@ def process_collision_data_incvec(row):
 
 def process_collision_data(data):
     data = data.dropna(subset=['scatterer_hit'])
-    # data.loc[:, 'scatterer_hit'] = data['scatterer_hit'].astype(int)
     data.loc[:, 'theta'] = data['theta'].astype(float) % (2*np.pi)
 
-    # Only if incidence_vector isn't already a scalar
-    if isinstance(data['incidence_vector'].iloc[0], np.ndarray):
-        data.loc[:, 'incidence_vector'] = data.apply(process_collision_data_incvec, axis=1)
+    # Only if reflection_vector isn't already a scalar
+    if isinstance(data['reflection_vector'].iloc[0], np.ndarray):
+        data.loc[:, 'reflection_vector'] = data.apply(process_collision_data_refvec, axis=1)
 
     #---------------------------------------
     # Manually combine corner scatterers into a single scatterer
@@ -57,18 +56,18 @@ def plot_collisions(data, numScatterers, plot_options={}):
     for i in range(len(data)):
         scatterer_hit = data['scatterer_hit'].iloc[i]
         theta = data['theta'].iloc[i]
-        incidence_vector = data['incidence_vector'].iloc[i]
+        reflection_vector = data['reflection_vector'].iloc[i]
 
         # find the scatterer by using index of numScatterers
         axi = axs[numScatterers.tolist().index(scatterer_hit)]
-        axi.plot(theta, incidence_vector, 'ro', markersize=markersize)
+        axi.plot(theta, reflection_vector, 'ro', markersize=markersize)
 
         # if i < 2000 and i % 2 == 0:
-        #     axi.plot(theta, incidence_vector, 'ro', markersize=markersize)
+        #     axi.plot(theta, reflection_vector, 'ro', markersize=markersize)
         # elif i < 2000 and i % 2 == 1:
-        #     axi.plot(theta, incidence_vector, 'bo', markersize=markersize)
+        #     axi.plot(theta, reflection_vector, 'bo', markersize=markersize)
         # else:
-        #     axi.plot(theta, incidence_vector, 'go', markersize=markersize)
+        #     axi.plot(theta, reflection_vector, 'go', markersize=markersize)
 
     if s is not None:
         fig.suptitle(f'$S_{s}$')
@@ -113,9 +112,9 @@ def animate_collisions(init_data, data, scatterers, boundary, fps=30, length=10)
         ax[0, 0].scatter(init_data['x'].iloc[i], init_data['y'].iloc[i], color='black', s=1)
         ax[1, 0].scatter(data['x'].iloc[i], data['y'].iloc[i], color='black', s=1)
         if data['scatterer_hit'].iloc[i] == 0:
-            ax[0, 1].scatter(data['theta'].iloc[i], data['incidence_vector'].iloc[i], color='black', s=1)
+            ax[0, 1].scatter(data['theta'].iloc[i], data['reflection_vector'].iloc[i], color='black', s=1)
         elif data['scatterer_hit'].iloc[i] == 1:
-            ax[1, 1].scatter(data['theta'].iloc[i], data['incidence_vector'].iloc[i], color='black', s=1)
+            ax[1, 1].scatter(data['theta'].iloc[i], data['reflection_vector'].iloc[i], color='black', s=1)
 
 
     ani = animation.FuncAnimation(fig, animate, frames=int(length*fps), interval=int(1000/fps))
