@@ -15,7 +15,7 @@ def process_collision_data_incvec(row):
 
 def process_collision_data(data):
     data = data.dropna(subset=['scatterer_hit'])
-    data.loc[:, 'scatterer_hit'] = data['scatterer_hit'].astype(int)
+    # data.loc[:, 'scatterer_hit'] = data['scatterer_hit'].astype(int)
     data.loc[:, 'theta'] = data['theta'].astype(float) % (2*np.pi)
 
     # Only if incidence_vector isn't already a scalar

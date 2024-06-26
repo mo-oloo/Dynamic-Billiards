@@ -31,8 +31,9 @@ class Particle:
         reflection_vector = incidence_vector - 2 * np.dot(incidence_vector, normal_vector) * normal_vector
         reflection_vector = reflection_vector / np.linalg.norm(reflection_vector) # Normalize reflection vector
         self.vel = reflection_vector
+        phi = np.arctan2(reflection_vector[1], reflection_vector[0]) - theta
 
-        return theta, reflection_vector
+        return theta, np.arctan(np.tan(phi))
 
 class Scatterer:
     def __init__(self, x, y, r):
@@ -67,9 +68,9 @@ class BilliardsSystem:
             'y': self.particle.pos[1],
             'vx': self.particle.vel[0],
             'vy': self.particle.vel[1],
-            'scatterer_hit': [scatterer_hit.astype(int) if scatterer_hit is not None else None],
-            'theta': [theta],
-            'incidence_vector': [incidence_vector]
+            'scatterer_hit': scatterer_hit.astype(int) if scatterer_hit is not None else None,
+            'theta': theta,
+            'incidence_vector': incidence_vector
         }
         return start_data
 
@@ -132,8 +133,7 @@ class BilliardsSystem:
             t_min, i_min = min(t, key=lambda x: x[0])
             return t_min, i_min
         else: # Shouldn't happen, since particle will always collide with boundary
-            print("THERE WAS AN ERROR")
-            return None, None
+            SystemError("No collision found")
         
     def data_entry(self, scat_index=None, theta=None, incidence_vector=None):
         new_data = {
