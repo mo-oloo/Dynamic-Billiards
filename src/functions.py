@@ -120,6 +120,54 @@ def generate_tangential_trajectories(n, boundary, scatterers):
     particles = [cl.Particle(arr=particles[i, :]) for i in range(len(particles))]
     return particles, scat, thet, incvecs
 
+def generate_random_trajectories(size, scatterer, arange=False):
+    '''
+    Generates a grid of initial conditions for a particle on the center scatterer.
+
+    Parameters:
+    size (array-like): Number of points to generate for the theta and phi values or the spacing between the points if arange=True
+    scatterer (Scatterer): Scatterer object
+    arange (bool): Whether to use np.arange or np.linspace. If True, size is the spacing between the points.
+
+    Returns:
+    particles (list): List of Particle objects
+    '''
+    m, n = size
+    if arange:
+        thetas = np.arange(0, 2*np.pi, m)
+        phis = np.arange(-np.pi/2, np.pi/2, n)
+    else:
+        thetas = np.linspace(0, 2*np.pi, m, endpoint=True)
+        phis = np.linspace(-np.pi/2, np.pi/2, n, endpoint=True)
+
+    particles = []
+    scat = []
+    thet = []
+    vel = []
+
+    x0 = scatterer.pos[0]
+    y0 = scatterer.pos[1]
+
+    for theta in thetas:
+        for phi in phis:
+            x = x0 + scatterer.radius*np.cos(theta)
+            y = y0 + scatterer.radius*np.sin(theta)
+            vx = np.cos(theta + phi)
+            vy = np.sin(theta + phi)
+            particles.append(np.array([x, y, vx, vy]))
+            scat.append(0)
+            thet.append(theta)
+            vel.append(phi)
+    particles = np.array(particles)
+    scat = np.array(scat)
+    thet = np.array(thet)
+    vel = np.array(vel)
+
+    particles = [cl.Particle(arr=particles[i, :]) for i in range(len(particles))]
+    return particles, scat, thet, vel
+
+    
+
 def batch_run(system, particles, n):
     '''
     Given a system and a set of particles, runs the simulation for each particle for n steps.
