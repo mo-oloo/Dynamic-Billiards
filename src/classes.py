@@ -56,8 +56,11 @@ class BilliardsSystem:
         self.boundary = boundary
         self.time = 0
         self.num_collisions = 0
+        self.global_pos = np.array([0, 0])
+        self.last_collision = np.array([0, 0])
         self.start_data = self.init_start_data()
         self.data = [self.start_data]
+
 
     def init_start_data(self, scatterer_hit=None, theta=None, reflection_vector=None):
         # IMPORTANT: This function actually uses the current location of the particle, only use when initializing the system
@@ -70,7 +73,9 @@ class BilliardsSystem:
             'vy': self.particle.vel[1],
             'scatterer_hit': scatterer_hit.astype(int) if scatterer_hit is not None else None,
             'theta': theta,
-            'reflection_vector': reflection_vector
+            'reflection_vector': reflection_vector,
+            'global_pos': np.array([0, 0]), # Assumes it starts at the origin
+            'last_collision': np.array([0, 0])
         }
         return start_data
 
@@ -79,6 +84,8 @@ class BilliardsSystem:
         self.num_collisions = 0
         self.particle.pos = np.array([self.start_data['x'], self.start_data['y']], dtype=np.float64)
         self.particle.vel = np.array([self.start_data['vx'], self.start_data['vy']], dtype=np.float64)
+        self.global_pos = np.array([0, 0])
+        self.last_collision = np.array([0, 0])
         self.data = [self.start_data]
 
     def run_simulation(self, n):
@@ -98,11 +105,12 @@ class BilliardsSystem:
         self.particle.update_position(time)
         self.time += time
 
-        new_pos = fn.check_particle_bounds(self.particle.pos, self.boundary.dimensions)
+        new_pos, change_vector = fn.check_particle_bounds(self.particle.pos, self.boundary.dimensions)
         if new_pos is not None:
             new_data = self.data_entry()
             self.data.append(new_data)
             self.particle.pos = new_pos
+            self.global_pos += change_vector
 
         if scatterer_index is None:
             theta, incidence_vector = None, None
@@ -144,7 +152,9 @@ class BilliardsSystem:
                 'vy': self.particle.vel[1],
                 'scatterer_hit': scat_index,
                 'theta': theta,
-                'reflection_vector': reflection_vector
+                'reflection_vector': reflection_vector,
+                'global_pos': self.global_pos,
+                'last_collision': self.last_collision
         }
         return new_data
         

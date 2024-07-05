@@ -55,17 +55,25 @@ def check_particle_bounds(pos, dimensions):
 
     x = pos[0]
     y = pos[1]
+    change_vector = np.array([0, 0])
 
     if x >= max_x:
         x = min_x
+        change_vector[0] += 1
     elif x <= min_x:
         x = max_x
+        change_vector[0] -= 1
     if y >= max_y:
         y = min_y
+        change_vector[1] += 1
     elif y <= min_y:
         y = max_y
+        change_vector[1] -= 1
 
-    return np.array([x, y]) if x != pos[0] or y != pos[1] else None
+    if x != pos[0] or y != pos[1]:
+        return np.array([x, y]), change_vector
+    else:
+        return None, None
 
 def generate_tangential_trajectories(n, boundary, scatterers):
     '''
@@ -164,10 +172,9 @@ def generate_random_trajectories(size, scatterer, arange=False):
     vel = np.array(vel)
 
     particles = [cl.Particle(arr=particles[i, :]) for i in range(len(particles))]
+
     return particles, scat, thet, vel
-
     
-
 def batch_run(system, particles, n):
     '''
     Given a system and a set of particles, runs the simulation for each particle for n steps.
