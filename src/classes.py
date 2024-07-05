@@ -110,7 +110,8 @@ class BilliardsSystem:
             new_data = self.data_entry()
             self.data.append(new_data)
             self.particle.pos = new_pos
-            self.global_pos += change_vector
+
+        self.global_pos = self.global_pos + change_vector if change_vector is not None else self.global_pos
 
         if scatterer_index is None:
             theta, incidence_vector = None, None
