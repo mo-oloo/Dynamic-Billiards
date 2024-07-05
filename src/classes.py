@@ -50,9 +50,10 @@ class Boundary:
 
 class BilliardsSystem:
 
-    def __init__(self, particle, scatterers, boundary):
+    def __init__(self, particle, scatterers, boundary, a, b):
         self.particle = particle
         self.scatterers = scatterers
+        self.scatpos = np.array([a, b])
         self.boundary = boundary
         self.time = 0
         self.num_collisions = 0
@@ -75,7 +76,8 @@ class BilliardsSystem:
             'theta': theta,
             'reflection_vector': reflection_vector,
             'global_pos': np.array([0, 0]), # Assumes it starts at the origin
-            'last_collision': np.array([0, 0])
+            'last_collision': np.array([0, 0]),
+            'symbol': None
         }
         return start_data
 
@@ -114,15 +116,20 @@ class BilliardsSystem:
         self.global_pos = self.global_pos + change_vector if change_vector is not None else self.global_pos
 
         if scatterer_index is None:
-            theta, incidence_vector = None, None
+            theta, incidence_vector, symbol = None, None, None
             collide_true = 0
         else:
             scatterer = self.scatterers[scatterer_index]
             theta, incidence_vector = self.particle.update_velocity(scatterer.pos)
             collide_true = 1
             self.num_collisions += 1
+
+            # position of scatterer hit
+            collision_pos_global = scatterer.pos + 2 * self.global_pos * self.scatpos
+            symbol = collision_pos_global - self.last_collision
+            self.last_collision = collision_pos_global
         
-        new_data = self.data_entry(scatterer_index, theta, incidence_vector)
+        new_data = self.data_entry(scatterer_index, theta, incidence_vector, symbol)
         self.data.append(new_data)
         return collide_true
 
@@ -143,7 +150,7 @@ class BilliardsSystem:
         else: # Shouldn't happen, since particle will always collide with boundary
             SystemError("No collision found")
         
-    def data_entry(self, scat_index=None, theta=None, reflection_vector=None):
+    def data_entry(self, scat_index=None, theta=None, reflection_vector=None, symbol=None):
         new_data = {
                 'time': self.time,
                 'n': self.num_collisions,
@@ -155,7 +162,8 @@ class BilliardsSystem:
                 'theta': theta,
                 'reflection_vector': reflection_vector,
                 'global_pos': self.global_pos,
-                'last_collision': self.last_collision
+                'last_collision': self.last_collision,
+                'symbol': symbol
         }
         return new_data
         

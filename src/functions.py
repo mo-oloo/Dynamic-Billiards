@@ -174,6 +174,13 @@ def generate_random_trajectories(size, scatterer, arange=False):
     particles = [cl.Particle(arr=particles[i, :]) for i in range(len(particles))]
 
     return particles, scat, thet, vel
+
+def process_trajectory_sequence(data):
+    data = data.dropna(subset=['symbol'])
+    data = data.reset_index(drop=True)
+    # Convert each symbol to a tuple
+    data.loc[:, 'symbol'] = data['symbol'].apply(lambda x: tuple(x))
+    return tuple(data['symbol'])
     
 def batch_run(system, particles, n):
     '''
