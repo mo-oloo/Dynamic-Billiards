@@ -77,7 +77,7 @@ class BilliardsSystem:
             'reflection_vector': reflection_vector,
             'global_pos': np.array([0, 0]), # Assumes it starts at the origin
             'last_collision': np.array([0, 0]),
-            'symbol': None
+            'symbol': np.array([0, 0])
         }
         return start_data
 

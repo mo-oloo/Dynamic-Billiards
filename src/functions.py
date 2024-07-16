@@ -175,13 +175,44 @@ def generate_random_trajectories(size, scatterer, arange=False):
 
     return particles, scat, thet, vel
 
-def process_trajectory_sequence(data):
+def process_trajectory_sequence(data, big_scat, a, b):
     data = data.dropna(subset=['symbol'])
     data = data.reset_index(drop=True)
     # Convert each symbol to a tuple
     data.loc[:, 'symbol'] = data['symbol'].apply(lambda x: tuple(x))
-    return tuple(data['symbol'])
-    
+    return check_over_under(data, big_scat, a, b)
+    # return data
+
+def check_over_under(data, big_scat, a, b):
+    for i in range(1, len(data)):
+        if data['scatterer_hit'].iloc[i-1] == data['scatterer_hit'].iloc[i] and data['scatterer_hit'].iloc[i] == big_scat:
+            symbol = data['symbol'].iloc[i]
+            symbol_abs = tuple(abs(x) for x in symbol) # Get absolute value
+            if symbol_abs != (2*a, 2*b):
+                continue
+            data2 = data.iloc[i]
+            data1 = data.iloc[i-1]
+
+            # Convert to first quadrant since it is symmetric and this cannot occur while passing through an axis
+            local1 = [abs(data1['x']), abs(data1['y'])]
+            local2 = [abs(data2['x']), abs(data2['y'])]
+            global1 = np.abs(data1['global_pos'])
+            global2 = np.abs(data2['global_pos'])
+            x1, y1 = local1[0] + 2*a*global1[0], local1[1] + 2*b*global1[1]
+            x2, y2 = local2[0] + 2*a*global2[0], local2[1] + 2*b*global2[1]
+
+            m = (y2-y1)/(x2-x1)
+            y = m*(a-x1) + y1
+
+            if y > b:
+                flag = 1
+            elif y < b:
+                flag = -1
+            else:
+                flag = 0
+            data.at[i, 'symbol'] = symbol + (flag,)
+    return data
+
 def batch_run(system, particles, n):
     '''
     Given a system and a set of particles, runs the simulation for each particle for n steps.
