@@ -157,9 +157,9 @@ def generate_random_trajectories(size, scatterer, arange=False):
     y0 = scatterer.pos[1]
 
     for theta in thetas:
+        x = x0 + scatterer.radius*np.cos(theta)
+        y = y0 + scatterer.radius*np.sin(theta)
         for phi in phis:
-            x = x0 + scatterer.radius*np.cos(theta)
-            y = y0 + scatterer.radius*np.sin(theta)
             vx = np.cos(theta + phi)
             vy = np.sin(theta + phi)
             particles.append(np.array([x, y, vx, vy]))
@@ -174,6 +174,48 @@ def generate_random_trajectories(size, scatterer, arange=False):
     particles = [cl.Particle(arr=particles[i, :]) for i in range(len(particles))]
 
     return particles, scat, thet, vel
+
+def generate_random_trajectories_2(size, r, a, b, arange=False):
+    m, n = size
+    if arange:
+        thetas = np.arange(0, 2*np.pi, m)
+        phis = np.arange(-np.pi/2, np.pi/2, n)
+    else:
+        thetas = np.linspace(0, 2*np.pi, m, endpoint=True)
+        phis = np.linspace(-np.pi/2, np.pi/2, n, endpoint=True)
+
+    particles = []
+    scat = []
+    thet = []
+    vel = []
+    symbs = []
+    
+    pos = [(a, b), (-a, b), (a, -b), (-a, -b)]
+
+    for i, (x0, y0) in enumerate(pos):
+        for theta in thetas:
+            x = x0 + r*np.cos(theta)
+            y = y0 + r*np.sin(theta)
+            # Check if particle is within the boundary
+            if np.abs(x) >= a or np.abs(y) >= b:
+                continue
+            for phi in phis:
+                vx = np.cos(theta + phi)
+                vy = np.sin(theta + phi)
+                particles.append(np.array([x, y, vx, vy]))
+                scat.append(i)
+                thet.append(theta)
+                vel.append(phi)
+                symbs.append((x0, y0))
+    particles = np.array(particles)
+    scat = np.array(scat)
+    thet = np.array(thet)
+    vel = np.array(vel)
+    symbs = np.array(symbs)
+
+    particles = [cl.Particle(arr=particles[i, :]) for i in range(len(particles))]
+
+    return particles, scat, thet, vel, symbs
 
 def process_trajectory_sequence(data, big_scat, a, b):
     data = data.dropna(subset=['symbol'])
