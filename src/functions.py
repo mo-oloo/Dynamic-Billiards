@@ -258,7 +258,7 @@ def check_over_under(data, big_scat, a, b):
 def generate_parameters(n=100, start_stop_irrationals = True):
     params = []
     r_min, r_max = np.sqrt(2)/4, np.sqrt(2)/2
-    
+
     r1_vals = np.linspace(r_min, r_max, num=n, endpoint=True)
     r2_vals = np.linspace(0, r_min, num=n, endpoint=True)
 

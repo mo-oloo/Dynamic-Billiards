@@ -62,6 +62,14 @@ class BilliardsSystem:
         self.start_data = self.init_start_data()
         self.data = [self.start_data]
 
+    def change_scatterers(self, r1, r2):
+        a, b = self.scatpos
+        scatterer0 = Scatterer(0, 0, r1)
+        scatterer1 = Scatterer(a, b, r2)
+        scatterer2 = Scatterer(a, -b, r2)
+        scatterer3 = Scatterer(-a, b, r2)
+        scatterer4 = Scatterer(-a, -b, r2)
+        self.scatterers = [scatterer0, scatterer1, scatterer2, scatterer3, scatterer4]
 
     def init_start_data(self, scatterer_hit=None, theta=None, reflection_vector=None):
         # IMPORTANT: This function actually uses the current location of the particle, only use when initializing the system
