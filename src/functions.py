@@ -255,6 +255,19 @@ def check_over_under(data, big_scat, a, b):
             data.at[i, 'symbol'] = symbol + (flag,)
     return data
 
+def generate_parameters(n=100, start_stop_irrationals = True):
+    params = []
+    r_min, r_max = np.sqrt(2)/4, np.sqrt(2)/2
+    
+    r1_vals = np.linspace(r_min, r_max, num=n, endpoint=True)
+    r2_vals = np.linspace(0, r_min, num=n, endpoint=True)
+
+    for r1 in r1_vals:
+        for r2 in r2_vals:
+            if 0.5 < r1 + r2 and r1 + r2 < r_max and r1 > r_min:
+                params.append((r1, r2))
+    return params
+
 def batch_run(system, particles, n):
     '''
     Given a system and a set of particles, runs the simulation for each particle for n steps.
