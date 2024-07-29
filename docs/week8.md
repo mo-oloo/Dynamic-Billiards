@@ -38,7 +38,7 @@ The axes of the plot are currently misleading; They are just the index of parame
 
 At the moment I have only considered the case where the center scatterer is larger, just so I could save time on running these numerical simulations. I do plan on checking the case where the corner scatterer is larger soon.
 
-I've also included the heat maps that just plot the sizes of the number of accepted sequences here [ADD LINK TO FOLDER OF IMAGES]
+I've also included the heat maps that just plot the sizes of the number of accepted sequences here [here](https://github.com/mo-oloo/Dynamic-Billiards/tree/main/docs/images/heatmaps_mn50_dx075)
 
 ![alt text](images/heatmaps_log_divided_mn50_dx05/s1.png)
 ![alt text](images/heatmaps_log_divided_mn50_dx05/s2.png)
