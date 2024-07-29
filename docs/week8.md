@@ -40,16 +40,16 @@ At the moment I have only considered the case where the center scatterer is larg
 
 I've also included the heat maps that just plot the sizes of the number of accepted sequences here [ADD LINK TO FOLDER OF IMAGES]
 
-![alt text](images/heatmaps_log_divided_mn50_dx05/s1.png)
-![alt text](images/heatmaps_log_divided_mn50_dx05/s2.png)
-![alt text](images/heatmaps_log_divided_mn50_dx05/s3.png)
-![alt text](images/heatmaps_log_divided_mn50_dx05/s4.png)
-![alt text](images/heatmaps_log_divided_mn50_dx05/s5.png)
-![alt text](images/heatmaps_log_divided_mn50_dx05/s6.png)
-![alt text](images/heatmaps_log_divided_mn50_dx05/s7.png)
-![alt text](images/heatmaps_log_divided_mn50_dx05/s8.png)
-![alt text](images/heatmaps_log_divided_mn50_dx05/s9.png)
-![alt text](images/heatmaps_log_divided_mn50_dx05/s10.png)
+![alt text](images/heatmaps_log_divided_mn50_dx075/s1.png)
+![alt text](images/heatmaps_log_divided_mn50_dx075/s2.png)
+![alt text](images/heatmaps_log_divided_mn50_dx075/s3.png)
+![alt text](images/heatmaps_log_divided_mn50_dx075/s4.png)
+![alt text](images/heatmaps_log_divided_mn50_dx075/s5.png)
+![alt text](images/heatmaps_log_divided_mn50_dx075/s6.png)
+![alt text](images/heatmaps_log_divided_mn50_dx075/s7.png)
+![alt text](images/heatmaps_log_divided_mn50_dx075/s8.png)
+![alt text](images/heatmaps_log_divided_mn50_dx075/s9.png)
+![alt text](images/heatmaps_log_divided_mn50_dx075/s10.png)
 
 # Conclusion
 
